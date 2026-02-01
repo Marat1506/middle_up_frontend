@@ -53,7 +53,7 @@ function App() {
   const handleReorder = useCallback(async (itemIds: number[]) => {
     try {
       await api.reorderItems(itemIds);
-      setSelectedRefreshKey(prev => prev + 1);
+      // Убираем обновление refreshKey для reorder - локальное состояние уже обновлено
     } catch (error) {
       console.error('Failed to reorder items:', error);
     }
@@ -66,7 +66,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Element Manager</h1>
+        <h1>Управление списками</h1>
         <AddItem onAdd={handleItemAdded} />
       </header>
       <main className="app-main">

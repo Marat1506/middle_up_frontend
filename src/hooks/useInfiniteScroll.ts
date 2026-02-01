@@ -52,7 +52,7 @@ export function useInfiniteScroll<T>({
       setItems(prev => isRefresh ? newItems : [...prev, ...newItems]);
       setHasMore((isRefresh ? 0 : items.length) + newItems.length < totalCount);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Произошла ошибка');
     } finally {
       setLoading(false);
       loadingRef.current = false;

@@ -24,7 +24,7 @@ export const ItemCard = memo(function ItemCard({
     >
       <span className="item-id">{item.id}</span>
       <span className="item-name">{item.name}</span>
-      {isSelected && <span className="selected-badge">Selected</span>}
+      {isSelected && <span className="selected-badge">Выбран</span>}
     </div>
   );
 });

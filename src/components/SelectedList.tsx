@@ -120,11 +120,18 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
       const newIndex = localItems.findIndex(item => item.id === over.id);
       
       if (oldIndex !== -1 && newIndex !== -1) {
-        // Сначала обновляем локальное состояние для мгновенного отклика
+        // Обновляем локальное состояние для мгновенного отклика
         const newItems = arrayMove(localItems, oldIndex, newIndex);
-        setLocalItems(newItems);
         
-        // Затем отправляем на сервер
+        // Обновляем order для каждого элемента
+        const updatedItems = newItems.map((item, index) => ({
+          ...item,
+          order: index
+        }));
+        
+        setLocalItems(updatedItems);
+        
+        // Отправляем на сервер
         const itemIds = newItems.map(item => item.id);
         try {
           await onReorder(itemIds);
@@ -148,10 +155,10 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
   return (
     <div className="panel">
       <div className="panel-header">
-        <h2>Selected Items</h2>
+        <h2>Выбранные элементы</h2>
         <input
           type="text"
-          placeholder="Filter by ID..."
+          placeholder="Поиск по ID..."
           value={filter}
           onChange={handleFilterChange}
           className="filter-input"
@@ -183,7 +190,7 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
             {activeItem ? <DragOverlayItem item={activeItem} /> : null}
           </DragOverlay>
         </DndContext>
-        {loading && <div className="loading">Loading...</div>}
+        {loading && <div className="loading">Загрузка...</div>}
         <div ref={loadMoreRef} className="load-more" />
       </div>
     </div>

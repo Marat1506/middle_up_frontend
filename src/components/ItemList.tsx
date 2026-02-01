@@ -29,10 +29,10 @@ export function ItemList({ onSelect, selectedIds, refreshKey = 0 }: ItemListProp
   return (
     <div className="panel">
       <div className="panel-header">
-        <h2>All Items</h2>
+        <h2>Все элементы</h2>
         <input
           type="text"
-          placeholder="Filter by ID..."
+          placeholder="Поиск по ID..."
           value={filter}
           onChange={handleFilterChange}
           className="filter-input"
@@ -49,7 +49,7 @@ export function ItemList({ onSelect, selectedIds, refreshKey = 0 }: ItemListProp
             />
           ))}
         </div>
-        {loading && <div className="loading">Loading...</div>}
+        {loading && <div className="loading">Загрузка...</div>}
         <div ref={loadMoreRef} className="load-more" />
       </div>
     </div>

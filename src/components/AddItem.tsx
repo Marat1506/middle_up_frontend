@@ -29,14 +29,14 @@ export function AddItem({ onAdd }: AddItemProps) {
     <form className="add-item-form" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="New element name..."
+        placeholder="Название нового элемента..."
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="add-input"
         disabled={loading}
       />
       <button type="submit" disabled={loading || !name.trim()}>
-        {loading ? 'Adding...' : 'Add Element'}
+        {loading ? 'Добавление...' : 'Добавить элемент'}
       </button>
     </form>
   );
