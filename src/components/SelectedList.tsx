@@ -55,15 +55,21 @@ function SortableItem({ item, onUnselect }: SortableItemProps) {
       style={style}
       className="sortable-item"
       {...attributes}
-      {...listeners}
     >
-      <span className="drag-handle">⋮⋮</span>
+      <span 
+        className="drag-handle"
+        {...listeners}
+      >
+        ⋮⋮
+      </span>
       <span className="item-id">{item.id}</span>
       <span className="item-name">{item.name}</span>
       <button
         className="unselect-btn"
         onClick={(e) => {
           e.stopPropagation();
+          e.preventDefault();
+          console.log('Удаление элемента:', item.id);
           onUnselect(item.id);
         }}
       >
