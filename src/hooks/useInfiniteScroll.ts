@@ -30,12 +30,31 @@ export function useInfiniteScroll<T>({
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilterState] = useState(initialFilter);
+  const [debouncedFilter, setDebouncedFilter] = useState(initialFilter);
   const loadingRef = useRef(false);
+  const debounceTimeoutRef = useRef<number | null>(null);
 
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
     rootMargin: '100px'
   });
+
+  // Debounce filter changes
+  useEffect(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = window.setTimeout(() => {
+      setDebouncedFilter(filter);
+    }, 300); // 300ms задержка
+
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [filter]);
 
   const fetchItems = useCallback(async (pageNum: number, filterStr: string, isRefresh = false) => {
     if (loadingRef.current) return;
@@ -70,27 +89,31 @@ export function useInfiniteScroll<T>({
   const loadMore = useCallback(() => {
     if (!loading && !loadingRef.current && hasMore) {
       const nextPage = Math.floor(items.length / initialLimit);
-      fetchItems(nextPage, filter);
+      fetchItems(nextPage, debouncedFilter);
     }
-  }, [loading, hasMore, items.length, filter, fetchItems, initialLimit]);
+  }, [loading, hasMore, items.length, debouncedFilter, fetchItems, initialLimit]);
 
   const refresh = useCallback(() => {
     setItems([]);
     setHasMore(true);
-    fetchItems(0, filter, true);
-  }, [filter, fetchItems]);
+    fetchItems(0, debouncedFilter, true);
+  }, [debouncedFilter, fetchItems]);
 
   const setFilter = useCallback((newFilter: string) => {
     setFilterState(newFilter);
+  }, []);
+
+  // Fetch when debouncedFilter changes
+  useEffect(() => {
     setItems([]);
     setHasMore(true);
-    fetchItems(0, newFilter, true);
-  }, [fetchItems]);
+    fetchItems(0, debouncedFilter, true);
+  }, [debouncedFilter, fetchItems]);
 
   useEffect(() => {
     setItems([]);
     setHasMore(true);
-    fetchItems(0, filter, true);
+    fetchItems(0, debouncedFilter, true);
   }, [refreshKey]);
 
   useEffect(() => {
