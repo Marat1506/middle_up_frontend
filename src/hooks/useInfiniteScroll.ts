@@ -33,6 +33,12 @@ export function useInfiniteScroll<T>({
   const [debouncedFilter, setDebouncedFilter] = useState(initialFilter);
   const loadingRef = useRef(false);
   const debounceTimeoutRef = useRef<number | null>(null);
+  const fetchFnRef = useRef(fetchFn);
+
+  // Update fetchFn ref when it changes
+  useEffect(() => {
+    fetchFnRef.current = fetchFn;
+  }, [fetchFn]);
 
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
@@ -47,7 +53,7 @@ export function useInfiniteScroll<T>({
     
     debounceTimeoutRef.current = window.setTimeout(() => {
       setDebouncedFilter(filter);
-    }, 300); // 300ms задержка
+    }, 300);
 
     return () => {
       if (debounceTimeoutRef.current) {
@@ -64,7 +70,7 @@ export function useInfiniteScroll<T>({
     setError(null);
 
     try {
-      const response = await fetchFn(pageNum, filterStr);
+      const response = await fetchFnRef.current(pageNum, filterStr);
       const newItems = response.items;
       const totalCount = response.total;
 
@@ -84,7 +90,7 @@ export function useInfiniteScroll<T>({
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [fetchFn]);
+  }, []);
 
   const loadMore = useCallback(() => {
     if (!loading && !loadingRef.current && hasMore) {
@@ -110,17 +116,20 @@ export function useInfiniteScroll<T>({
     fetchItems(0, debouncedFilter, true);
   }, [debouncedFilter, fetchItems]);
 
+  // Fetch when refreshKey changes
   useEffect(() => {
-    setItems([]);
-    setHasMore(true);
-    fetchItems(0, debouncedFilter, true);
-  }, [refreshKey]);
+    if (refreshKey > 0) {
+      setItems([]);
+      setHasMore(true);
+      fetchItems(0, debouncedFilter, true);
+    }
+  }, [refreshKey, debouncedFilter, fetchItems]);
 
   useEffect(() => {
-    if (inView && !loadingRef.current && hasMore) {
+    if (inView && !loadingRef.current && hasMore && items.length > 0) {
       loadMore();
     }
-  }, [inView, hasMore, loading, loadMore]);
+  }, [inView, hasMore, loading, loadMore, items.length]);
 
   return {
     items,
