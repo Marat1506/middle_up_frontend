@@ -16,11 +16,16 @@ export interface ItemsResponse {
   total: number;
 }
 
+export interface SelectedItemsResponse {
+  items: SelectedItem[];
+  total: number;
+}
+
 export interface StateResponse {
   selectedIds: number[];
   selectedOrder: number[];
   nextId: number;
-  nextOrder;
+  nextOrder: number;
 }
 
 export const api = {
@@ -31,7 +36,7 @@ export const api = {
     return response.data;
   },
 
-  getSelected: async (filter: string = '', page: number = 0): Promise<ItemsResponse> => {
+  getSelected: async (filter: string = '', page: number = 0): Promise<SelectedItemsResponse> => {
     const response = await axios.get(`${API_URL}/selected`, {
       params: { filter, page }
     });

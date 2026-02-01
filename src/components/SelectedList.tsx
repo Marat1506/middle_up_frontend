@@ -6,8 +6,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
-  DragStartEvent,
+  type DragEndEvent,
+  type DragStartEvent,
   DragOverlay,
 } from '@dnd-kit/core';
 import {
@@ -18,7 +18,8 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { SelectedItem, api } from '../services/api';
+import type { SelectedItem } from '../services/api';
+import { api } from '../services/api';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 interface SelectedListProps {
@@ -87,7 +88,7 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
   const [activeId, setActiveId] = useState<number | null>(null);
   const [localItems, setLocalItems] = useState<SelectedItem[]>([]);
 
-  const { items, loading, error, hasMore, loadMoreRef, setFilter: setFilterHook } = useInfiniteScroll<SelectedItem>({
+  const { items, loading, error, loadMoreRef, setFilter: setFilterHook } = useInfiniteScroll<SelectedItem>({
     fetchFn: (page, filterStr) => api.getSelected(filterStr, page),
     filter,
     initialLimit: 20,

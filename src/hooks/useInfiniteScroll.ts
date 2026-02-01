@@ -16,7 +16,7 @@ interface UseInfiniteScrollResult<T> {
   loadMore: () => void;
   refresh: () => void;
   setFilter: (filter: string) => void;
-  loadMoreRef: React.RefObject<HTMLDivElement>;
+  loadMoreRef: (node?: Element | null) => void;
 }
 
 export function useInfiniteScroll<T>({
@@ -26,12 +26,10 @@ export function useInfiniteScroll<T>({
   refreshKey = 0
 }: UseInfiniteScrollOptions<T>): UseInfiniteScrollResult<T> {
   const [items, setItems] = useState<T[]>([]);
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilterState] = useState(initialFilter);
-  const [total, setTotal] = useState(0);
   const loadingRef = useRef(false);
 
   const { ref: loadMoreRef, inView } = useInView({
@@ -52,7 +50,6 @@ export function useInfiniteScroll<T>({
       const totalCount = response.total;
 
       setItems(prev => isRefresh ? newItems : [...prev, ...newItems]);
-      setTotal(totalCount);
       setHasMore((isRefresh ? 0 : items.length) + newItems.length < totalCount);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -66,13 +63,11 @@ export function useInfiniteScroll<T>({
     if (!loading && !loadingRef.current && hasMore) {
       const nextPage = Math.floor(items.length / initialLimit);
       fetchItems(nextPage, filter);
-      setPage(nextPage);
     }
   }, [loading, hasMore, items.length, filter, fetchItems, initialLimit]);
 
   const refresh = useCallback(() => {
     setItems([]);
-    setPage(0);
     setHasMore(true);
     fetchItems(0, filter, true);
   }, [filter, fetchItems]);
@@ -80,14 +75,12 @@ export function useInfiniteScroll<T>({
   const setFilter = useCallback((newFilter: string) => {
     setFilterState(newFilter);
     setItems([]);
-    setPage(0);
     setHasMore(true);
     fetchItems(0, newFilter, true);
   }, [fetchItems]);
 
   useEffect(() => {
     setItems([]);
-    setPage(0);
     setHasMore(true);
     fetchItems(0, filter, true);
   }, [refreshKey]);
@@ -106,6 +99,6 @@ export function useInfiniteScroll<T>({
     loadMore,
     refresh,
     setFilter,
-    loadMoreRef: loadMoreRef as React.RefObject<HTMLDivElement>
+    loadMoreRef
   };
 }

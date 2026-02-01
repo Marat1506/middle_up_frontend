@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Item, api } from '../services/api';
+import type { Item } from '../services/api';
+import { api } from '../services/api';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { ItemCard } from './ItemCard';
 
@@ -12,7 +13,7 @@ interface ItemListProps {
 export function ItemList({ onSelect, selectedIds, refreshKey = 0 }: ItemListProps) {
   const [filter, setFilter] = useState('');
 
-  const { items, loading, error, hasMore, loadMoreRef, setFilter: setFilterHook } = useInfiniteScroll<Item>({
+  const { items, loading, error, loadMoreRef, setFilter: setFilterHook } = useInfiniteScroll<Item>({
     fetchFn: (page, filterStr) => api.getItems(filterStr, page),
     filter,
     initialLimit: 20,

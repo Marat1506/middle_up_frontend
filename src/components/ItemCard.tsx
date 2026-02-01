@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Item, SelectedItem } from '../services/api';
+import type { Item, SelectedItem } from '../services/api';
 
 interface ItemCardProps {
   item: Item | SelectedItem;
