@@ -100,6 +100,20 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
     setLocalItems(items);
   }, [items]);
 
+  const handleUnselectLocal = useCallback(async (id: number) => {
+    // Сначала обновляем локальное состояние для мгновенного отклика
+    setLocalItems(prev => prev.filter(item => item.id !== id));
+    
+    // Затем вызываем родительский обработчик
+    try {
+      await onUnselect(id);
+    } catch (error) {
+      console.error('Failed to unselect:', error);
+      // В случае ошибки возвращаем элемент обратно
+      setLocalItems(items);
+    }
+  }, [onUnselect, items]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -181,7 +195,7 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
                 <SortableItem
                   key={item.id}
                   item={item}
-                  onUnselect={onUnselect}
+                  onUnselect={handleUnselectLocal}
                 />
               ))}
             </div>
