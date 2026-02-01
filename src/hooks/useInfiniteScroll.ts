@@ -49,15 +49,23 @@ export function useInfiniteScroll<T>({
       const newItems = response.items;
       const totalCount = response.total;
 
-      setItems(prev => isRefresh ? newItems : [...prev, ...newItems]);
-      setHasMore((isRefresh ? 0 : items.length) + newItems.length < totalCount);
+      setItems(prev => {
+        if (isRefresh) {
+          setHasMore(newItems.length < totalCount);
+          return newItems;
+        } else {
+          const updatedItems = [...prev, ...newItems];
+          setHasMore(updatedItems.length < totalCount);
+          return updatedItems;
+        }
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка');
     } finally {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [fetchFn, items.length]);
+  }, [fetchFn]);
 
   const loadMore = useCallback(() => {
     if (!loading && !loadingRef.current && hasMore) {
