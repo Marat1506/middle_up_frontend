@@ -43,8 +43,7 @@ function App() {
         next.delete(id);
         return next;
       });
-      setRefreshKey(prev => prev + 1);
-      setSelectedRefreshKey(prev => prev + 1);
+      // Убираем обновление refreshKey - локальное состояние уже обновлено
     } catch (error) {
       console.error('Failed to unselect item:', error);
     }
