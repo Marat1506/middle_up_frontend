@@ -32,7 +32,7 @@ export function ItemList({ onSelect, selectedIds, refreshKey = 0 }: ItemListProp
         <h2>Все элементы</h2>
         <input
           type="text"
-          placeholder="Поиск по ID..."
+          placeholder="Поиск по ID или названию..."
           value={filter}
           onChange={handleFilterChange}
           className="filter-input"

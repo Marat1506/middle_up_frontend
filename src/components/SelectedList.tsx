@@ -178,7 +178,7 @@ export function SelectedList({ onUnselect, onReorder, refreshKey = 0 }: Selected
         <h2>Выбранные элементы</h2>
         <input
           type="text"
-          placeholder="Поиск по ID..."
+          placeholder="Поиск по ID или названию..."
           value={filter}
           onChange={handleFilterChange}
           className="filter-input"
